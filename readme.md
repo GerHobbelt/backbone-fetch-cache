@@ -130,6 +130,18 @@ Backbone.fetchCache.priorityFn = function(a, b) {
 };
 ```
 
+## Automatic cache invalidation
+The cache item for a particular call will be cleared when a `create`, `update`, `patch` or `delete` call is made to the server. The plugin tries to be intelligent about this by clearing a model's collection cache if the model has a `.collection property`.
+
+To achieve this, the plugin overrides `Backbone.Model.protoype.sync` and then calls the original method. If you are planning to override sync on a particular model then you should keep this in mind and make sure that you do it before the plugin runs. Overriding Backbone.sync directly should work fine.
+
+## Manual cache invalidation
+Sometimes you just need to clear a cached item manually. This can be called safely from anywhere in your application.
+
+```js
+Backbone.fetchCache.clearItem(myModel.url);
+```
+
 ## Tests
 You can run the tests by cloning the repo, installing the dependencies and
 running `grunt jasmine`:
@@ -146,7 +158,9 @@ $ grunt
 ```
 
 ## Changelog
+- v0.1.6: Update to call the correct `add` and `reset` methods for collections - thanks [@mzafer](https://github.com/mzafer)!
+- v0.1.5: Attempt to clear cache keys on PUT/POST/DELETE
 - v0.1.4: Bug fix for older Webkits which throw an error trying to JSON.parse(null)
-- v0.1.3: Auto expiration of old cache items if `locaStorage` gets full - thanks [@inf0rmer](https://github.com/inf0rmer)!.
+- v0.1.3: Auto expiration of old cache items if `locaStorage` gets full - thanks [@inf0rmer](https://github.com/inf0rmer)!
 - v0.1.2: Add AMD support.
 - v0.1.1: Add `prefetch` option.
