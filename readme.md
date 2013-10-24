@@ -40,6 +40,10 @@ requirejs.config({
 });
 ```
 
+A note on [Zepto.js](http://zeptojs.com/). This plugin uses `jQuery.Deferred`
+which is not included in Zepto. You'll need to add a third party
+implementation of `jQuery.Deferred`, e.g. [Standalone-Deferred](https://github.com/Mumakil/Standalone-Deferred)
+
 ## Options
 ### `cache`
 Calls to `modelInstance.fetch` or `collectionInstance.fetch` will be fulfilled from the cache (if possible) when `cache: true` is set in the options hash:
@@ -93,7 +97,7 @@ myCollection.fetch({ cache: true, expires: 60000 });
 
 // These will never expire
 myModel.fetch({ cache: true, expires: false });
-myCollection.fetch({ cache: expires: false });
+myCollection.fetch({ cache: true, expires: false });
 ```
 
 <hr />
@@ -105,6 +109,27 @@ By default the cache is persisted in localStorage (if available). Set `Backbone.
 Backbone.fetchCache.localStorage = false;
 ```
 
+### `priorityFn`
+When setting items in localStorage, the browser may throw a ```QUOTA_EXCEEDED_ERR```, meaning the store is full. Backbone.fetchCache tries to work around this problem by deleting what it considers the most stale item to make space for the new data. The staleness of data is determined by the sorting function ```priorityFn````, which by default returns the oldest item.
+
+The default is:
+```
+Backbone.fetchCache.priorityFn = function(a, b) {
+  if (!a || !a.expires || !b || !b.expires) {
+    return a;
+  }
+
+  return a.expires - b.expires;
+};
+```
+
+You can override this function with your own logic (in this case, returning the most recent item):
+```
+Backbone.fetchCache.priorityFn = function(a, b) {
+  return b.expires - a.expires;
+};
+```
+
 ## Tests
 You can run the tests by cloning the repo, installing the dependencies and
 running `grunt jasmine`:
@@ -114,12 +139,6 @@ $ npm install
 $ grunt jasmine
 ```
 
-To see the tests in a browser, run:
-
-```
-$ grunt jasmine-server
-```
-
 The default grunt task runs tests and lints the code.
 
 ```
@@ -127,5 +146,6 @@ $ grunt
 ```
 
 ## Changelog
+- v0.1.3: Auto expiration of old cache items if `locaStorage` gets full - thanks [@inf0rmer](https://github.com/inf0rmer)!.
 - v0.1.2: Add AMD support.
 - v0.1.1: Add `prefetch` option.
