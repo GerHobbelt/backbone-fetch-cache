@@ -130,6 +130,10 @@ Backbone.fetchCache.priorityFn = function(a, b) {
 };
 ```
 
+## Events
+
+The `sync` event is triggered on a cache hit. A `cachesync` event is also triggered on Models and Collections, but only when a cache hit happens. This can be used if you need to differentiate between a server backed `sync` event and a cache backed event.
+
 ## Automatic cache invalidation
 The cache item for a particular call will be cleared when a `create`, `update`, `patch` or `delete` call is made to the server. The plugin tries to be intelligent about this by clearing a model's collection cache if the model has a `.collection property`.
 
@@ -158,10 +162,12 @@ $ grunt
 ```
 
 ## Changelog
-- v0.1.7: Ensures that `parse` is called for collections - thanks [@fernandopg](https://github.com/fernandopg)!
-- v0.1.6: Update to call the correct `add` and `reset` methods for collections - thanks [@mzafer](https://github.com/mzafer)!
+
+- v0.1.8: Trigger `sync` and `cachesync` events - thanks to [@victorquinn](https://github.com/victorquinn).
+- v0.1.7: Ensures that `parse` is called for collections - thanks to [@fernandopg](https://github.com/fernandopg).
+- v0.1.6: Update to call the correct `add` and `reset` methods for collections - thanks to [@mzafer](https://github.com/mzafer).
 - v0.1.5: Attempt to clear cache keys on PUT/POST/DELETE
 - v0.1.4: Bug fix for older Webkits which throw an error trying to JSON.parse(null)
-- v0.1.3: Auto expiration of old cache items if `locaStorage` gets full - thanks [@inf0rmer](https://github.com/inf0rmer)!
+- v0.1.3: Auto expiration of old cache items if `locaStorage` gets full - thanks to [@inf0rmer](https://github.com/inf0rmer).
 - v0.1.2: Add AMD support.
 - v0.1.1: Add `prefetch` option.
